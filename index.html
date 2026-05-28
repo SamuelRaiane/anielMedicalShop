@@ -79,41 +79,62 @@
         .fade-slide {
             animation: fadeSlideUp 0.5s ease-out;
         }
-        .timeline-connector {
-            transition: all 0.3s ease;
-        }
-        /* Timeline alignement parfait */
-        .timeline-flex {
+
+        /* ========== TIMELINE CORRIGÉE ========== */
+        .timeline-container {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            width: 100%;
+            justify-content: center;
+            gap: 0;
         }
         .timeline-step {
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
+        }
+        .timeline-dot {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
             flex-shrink: 0;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         .timeline-line {
-            flex: 1;
             height: 3px;
-            background: #E2E8F0;
+            width: 40px;
             border-radius: 3px;
-            margin: 0 12px;
+            margin: 0 -2px;
+            align-self: center;
+            margin-bottom: 24px;
         }
-        .timeline-line-filled {
-            background: linear-gradient(90deg, #10B981, #6366F1);
+        .timeline-label {
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 8px;
+            white-space: nowrap;
         }
-        @media (max-width: 640px) {
-            .timeline-line { margin: 0 6px; }
-            .step-label { font-size: 9px; white-space: nowrap; }
-            .step-dot { width: 36px; height: 36px; font-size: 12px; }
+        @media (min-width: 640px) {
+            .timeline-dot { width: 52px; height: 52px; font-size: 1.1rem; }
+            .timeline-line { width: 60px; }
+            .timeline-label { font-size: 11px; }
         }
+        @media (min-width: 768px) {
+            .timeline-line { width: 80px; }
+            .timeline-label { font-size: 12px; }
+        }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #E2E8F0; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #6366F1; }
+        
         .info-row {
             display: flex;
             align-items: baseline;
@@ -197,7 +218,7 @@
         <!-- Footer -->
         <footer class="mt-12 text-center text-xs text-slate-400 pb-8">
             <p>© 2026 Aniel Medical SHOP</p>
-            <p class="mt-1">Besoin d'aide ? <a href="https://www.facebook.com/profile.php?id=61587421085556" class="underline hover:text-indigo-500 transition">Facebook : Aniel Medical SHOP</a> | <a href="#" class="underline hover:text-indigo-500 transition">WhatsApp : 034 36 045 45</a></p>
+            <p class="mt-1">Besoin d'aide ? <a href="https://www.facebook.com/profile.php?id=61587421085556" class="underline hover:text-indigo-500 transition">Facebook : Aniel Medical SHOP</a> | <a href="https://wa.me/261343604545" target="_blank" class="underline hover:text-indigo-500 transition">WhatsApp : 034 36 045 45</a></p>
         </footer>
     </div>
 
@@ -208,20 +229,34 @@
         let dataLoaded = false;
 
         async function loadData() {
-            if (dataLoaded) return true;
-            try {
-                const response = await fetch(DATA_URL, { cache: 'no-cache' });
-                if (!response.ok) throw new Error();
-                const text = await response.text();
-                const db = JSON.parse(text);
-                orders = db.orders || [];
-                dataLoaded = true;
-                return true;
-            } catch(e) {
-                console.error("Erreur chargement:", e);
-                return false;
+    try {
+        // Ajouter un timestamp pour éviter le cache GitHub
+        const url = GIST_RAW + "?t=" + Date.now();
+        console.log("Chargement:", url);
+        
+        const response = await fetch(url, { 
+            cache: 'no-store',
+            headers: { 
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
             }
-        }
+        });
+        
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        
+        const text = await response.text();
+        if (!text || text.trim().length === 0) throw new Error("Fichier vide");
+        
+        const db = JSON.parse(text);
+        orders = db.orders || [];
+        console.log("✅ " + orders.length + " commandes chargées");
+        return true;
+    } catch(e) {
+        console.error("❌ Erreur:", e.message);
+        return false;
+    }
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return 'Non spécifiée';
@@ -279,6 +314,43 @@
             renderOrderPremium(order);
         }
 
+        // ========== TIMELINE CORRIGÉE (cercles + traits alignés) ==========
+        function renderTimeline(steps) {
+            let html = '<div class="timeline-container">';
+            
+            steps.forEach((step, idx) => {
+                let dotClass, dotContent;
+                if (step.completed) {
+                    dotClass = 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30';
+                    dotContent = '<i class="fa-solid fa-check text-xs"></i>';
+                } else if (step.active) {
+                    dotClass = 'bg-indigo-600 text-white ring-4 ring-indigo-200 shadow-lg shadow-indigo-500/40';
+                    dotContent = '<i class="fa-solid fa-ellipsis text-xs"></i>';
+                } else {
+                    dotClass = 'bg-slate-200 text-slate-400';
+                    dotContent = '<i class="fa-regular fa-circle text-xs"></i>';
+                }
+                
+                const labelClass = step.completed ? 'text-slate-700' : (step.active ? 'text-indigo-600 font-extrabold' : 'text-slate-400');
+                const lineClass = step.completed ? 'bg-emerald-500' : 'bg-slate-200';
+                
+                // Cercle
+                html += `
+                    <div class="timeline-step">
+                        <div class="timeline-dot ${dotClass}">${dotContent}</div>
+                        <div class="timeline-label ${labelClass}">${step.name}</div>
+                    </div>`;
+                
+                // Trait entre les cercles (sauf après le dernier)
+                if (idx < steps.length - 1) {
+                    html += `<div class="timeline-line ${lineClass}"></div>`;
+                }
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
         function renderOrderPremium(order) {
             const container = document.getElementById('resultContainer');
             
@@ -313,59 +385,15 @@
                 statusIcon = "fa-hand-peace";
             }
 
-            let stepPercent = 25;
-            if (hasReady) stepPercent = 50;
-            if (hasInDelivery) stepPercent = 75;
-            if (allDone) stepPercent = 100;
-
-            const orderDate = order.orderDate ? new Date(order.orderDate) : new Date();
-            const prepDate = new Date(orderDate);
-            prepDate.setHours(orderDate.getHours() + 7);
-            const transitDate = new Date(prepDate);
-            transitDate.setHours(prepDate.getHours() + 12);
-            const deliveryDate = order.dueDate ? new Date(order.dueDate) : new Date(orderDate);
-            deliveryDate.setDate(orderDate.getDate() + 3);
-
             const steps = [
-                { name: "Confirmée", icon: "fa-check-circle", date: formatDateTime(orderDate), completed: true },
-                { name: "Préparée", icon: "fa-box", date: formatDateTime(prepDate), completed: hasReady || hasInDelivery || allDone },
-                { name: "En transit", icon: "fa-truck", date: formatDateTime(transitDate), completed: hasInDelivery || allDone, active: hasInDelivery && !allDone },
-                { name: allRécupéré ? "Récupérée" : "Livrée", icon: allRécupéré ? "fa-hand-peace" : "fa-house-chimney", date: formatDateTime(deliveryDate), completed: allDone, active: false }
+                { name: "Confirmée", completed: true },
+                { name: "Préparée", completed: hasReady || hasInDelivery || allDone },
+                { name: "En transit", completed: hasInDelivery || allDone, active: hasInDelivery && !allDone },
+                { name: allRécupéré ? "Récupérée" : "Livrée", completed: allDone }
             ];
 
-            // Timeline avec alignement parfait
-            let timelineHtml = `<div class="timeline-flex">`;
-            steps.forEach((step, idx) => {
-                let dotClass = "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-4 border-white shadow-md transition-all duration-300 ";
-                let dotContent = "";
-                if (step.completed) {
-                    dotClass += "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30";
-                    dotContent = `<i class="fa-solid fa-check text-xs"></i>`;
-                } else if (step.active) {
-                    dotClass += "bg-indigo-600 text-white ring-4 ring-indigo-200 shadow-lg shadow-indigo-500/40";
-                    dotContent = `<i class="fa-solid ${step.icon} text-xs animate-pulse"></i>`;
-                } else {
-                    dotClass += "bg-slate-200 text-slate-400";
-                    dotContent = `<i class="fa-regular fa-circle text-xs"></i>`;
-                }
-                
-                timelineHtml += `
-                    <div class="timeline-step">
-                        <div class="${dotClass}">
-                            ${dotContent}
-                        </div>
-                        <span class="step-label text-[10px] md:text-xs font-semibold mt-2 ${step.active ? 'text-indigo-600' : (step.completed ? 'text-slate-700' : 'text-slate-400')}">${step.name}</span>
-                        <span class="text-[9px] text-slate-400 hidden md:block">${step.date || ''}</span>
-                    </div>
-                `;
-                if (idx < steps.length - 1) {
-                    const lineClass = step.completed ? 'timeline-line-filled' : '';
-                    timelineHtml += `<div class="timeline-line ${lineClass}"></div>`;
-                }
-            });
-            timelineHtml += `</div>`;
+            const timelineHtml = renderTimeline(steps);
 
-            // Articles stylisés
             let itemsHtml = '';
             visibleItems.forEach((item, idx) => {
                 const coutureStatus = item.coutureStatus === 'terminé' ? 'Terminé' : (item.coutureStatus === 'en cours' ? 'En cours' : 'En attente');
@@ -375,8 +403,7 @@
                             <div class="flex-1">
                                 <div class="flex flex-wrap items-center gap-2 mb-3">
                                     <span class="w-7 h-7 rounded-full gradient-bg text-white text-xs font-bold flex items-center justify-center">${idx+1}</span>
-                                    <span class="font-extrabold text-slate-800 text-base">${item.quantity}x ${item.productType || 'Vareuse'}</span>
-                                    <span class="product-tag">Taille ${item.size}</span>
+                                    <span class="font-extrabold text-slate-800 text-base">${item.quantity}x ${item.productType || 'Vareuse'} - Taille ${item.size}</span>
                                 </div>
                                 <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 text-sm">
                                     <div><span class="text-slate-400 text-xs">Tissu</span><br><span class="font-semibold">${item.fabricType || '-'}</span></div>
@@ -389,7 +416,7 @@
                                 ${item.persoText ? `<div class="mt-3 p-2 bg-indigo-50 rounded-xl text-sm"><span class="font-semibold text-indigo-600">Broderie :</span> ${escapeHtml(item.persoText)}</div>` : ''}
                                 <div class="flex flex-wrap gap-4 mt-3 pt-2 border-t border-slate-200 text-sm">
                                     <span class="flex items-center gap-1"><span class="text-slate-400">Couture :</span> <strong class="${item.coutureStatus === 'terminé' ? 'text-emerald-600' : 'text-amber-600'}">${coutureStatus}</strong></span>
-                                    ${item.broderieStatus ? `<span class="flex items-center gap-1"><span class="text-slate-400">🪡 Broderie :</span> <strong>${item.broderieStatus === 'terminé' ? 'Terminé' : (item.broderieStatus === 'en cours' ? 'En cours' : 'À faire')}</strong></span>` : ''}
+                                    ${item.broderieStatus ? `<span class="flex items-center gap-1"><span class="text-slate-400">Broderie :</span> <strong>${item.broderieStatus === 'terminé' ? 'Terminé' : (item.broderieStatus === 'en cours' ? 'En cours' : 'À faire')}</strong></span>` : ''}
                                 </div>
                             </div>
                         </div>
