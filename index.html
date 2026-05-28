@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Démo élégante | Prête pour Netlify</title>
+  <!-- Une police moderne et propre depuis Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (gratuite, icônes) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #f9fafc 0%, #eef2f5 100%);
+      color: #1a2c3e;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* header / navigation minimaliste */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.7rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .badge {
+      background: rgba(37, 99, 235, 0.1);
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1e40af;
+      backdrop-filter: blur(2px);
+    }
+
+    .badge i {
+      margin-right: 6px;
+      font-size: 0.8rem;
+    }
+
+    /* section hero */
+    .hero {
+      text-align: center;
+      max-width: 780px;
+      margin: 2rem auto 3rem auto;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #1e293b, #2d3a4b);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #334155;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 1.6rem;
+      border-radius: 60px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.2s ease;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      background: white;
+      color: #1f2a3e;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px -10px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      border-color: #2563eb;
+      background: rgba(37, 99, 235, 0.03);
+      transform: translateY(-2px);
+    }
+
+    /* cartes fonctionnalités */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 4rem 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      padding: 1.8rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      background: white;
+      border-color: #e2e8f0;
+      box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.2rem;
+      color: #2563eb;
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .card p {
+      color: #475569;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-link {
+      color: #2563eb;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .card-link:hover {
+      gap: 0.7rem;
+    }
+
+    /* section compteur / stats */
+    .stats {
+      background: white;
+      border-radius: 2rem;
+      padding: 2rem 1.5rem;
+      margin: 3rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      text-align: center;
+      gap: 2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+      border: 1px solid #edf2f7;
+    }
+
+    .stat-item h4 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .stat-item p {
+      color: #4b5563;
+      font-weight: 500;
+    }
+
+    /* zone de démo interactive */
+    .demo-interactive {
+      background: linear-gradient(110deg, #f1f5f9 0%, #ffffff 100%);
+      border-radius: 1.8rem;
+      padding: 2rem;
+      margin: 2.5rem 0;
+      border: 1px solid #e0e7ef;
+    }
+
+    .demo-title {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .counter-box {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      background: #ffffffcc;
+      padding: 1.2rem 1.5rem;
+      border-radius: 1.5rem;
+      justify-content: space-between;
+    }
+
+    .click-area {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .click-btn {
+      background: #2563eb;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      width: 48px;
+      height: 48px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: 0.1s linear;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .click-btn:active {
+      transform: scale(0.94);
+    }
+
+    .reset-btn {
+      background: #e2e8f0;
+      color: #1e293b;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 500;
+    }
+
+    .counter-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      font-family: monospace;
+      background: #0f172a;
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 60px;
+      color: white;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .message-area {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #2c3e66;
+      font-style: italic;
+    }
+
+    /* formulaire simple */
+    .form-demo {
+      margin-top: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .input-field {
+      flex: 2;
+      min-width: 180px;
+    }
+
+    .input-field label {
+      display: block;
+      font-weight: 500;
+      font-size: 0.8rem;
+      margin-bottom: 0.3rem;
+      color: #334155;
+    }
+
+    .input-field input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 60px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      font-family: inherit;
+      transition: 0.2s;
+    }
+
+    .input-field input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+    }
+
+    .submit-demo {
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 60px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .feedback {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      background: #e6f0ff;
+      border-radius: 60px;
+      display: inline-block;
+    }
+
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #5b6e8c;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 2rem;
+    }
+
+    @media (max-width: 680px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .container {
+        padding: 1.5rem;
+      }
+      .counter-value {
+        font-size: 1.8rem;
+        min-width: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Barre supérieure simple -->
+  <div class="top-bar">
+    <div class="logo">
+      <i class="fas fa-feather-alt" style="color:#2563eb; margin-right: 6px;"></i> DémoFlow
+    </div>
+    <div class="badge">
+      <i class="fas fa-rocket"></i> Prêt pour Netlify
+    </div>
+  </div>
+
+  <!-- Section héro -->
+  <div class="hero">
+    <h1>Hébergement express <br>sur Netlify</h1>
+    <p>Une page web moderne, réactive et interactive — prête à être déployée en un clic. Glissez-déposez ce dossier sur Netlify Drop, et c'est en ligne !</p>
+    <div class="btn-group">
+      <a href="#" class="btn btn-primary" id="exploreBtn"><i class="fas fa-mouse-pointer"></i> Explorer la démo</a>
+      <a href="https://app.netlify.com/drop" target="_blank" class="btn btn-outline"><i class="fab fa-netlify"></i> Déployer sur Netlify</a>
+    </div>
+  </div>
+
+  <!-- Grille de fonctionnalités (cartes) -->
+  <div class="features">
+    <div class="card">
+      <div class="card-icon"><i class="fas fa-bolt"></i></div>
+      <h3>Déploiement instantané</h3>
+      <p>Glissez votre dossier sur Netlify Drop, obtenez une URL publique en quelques secondes. Aucune configuration requise.</p>
+      <a href="#" class="card-link">En savoir plus <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-icon"><i class="fas fa-palette"></i></div>
+      <h3>Design moderne</h3>
+      <p>Interface propre, animations subtiles et composants interactifs — prête à être personnalisée selon vos besoins.</p>
+      <a href="#" class="card-link">Voir le style <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+      <h3>Statistiques dynamiques</h3>
+      <p>Compteurs interactifs et retour utilisateur. Idéal pour tester des concepts sans backend.</p>
+      <a href="#" class="card-link">Jouer avec <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- Section Stats (simulation) -->
+  <div class="stats">
+    <div class="stat-item">
+      <h4 id="statVisits">+1.2k</h4>
+      <p>Visites simulées</p>
+    </div>
+    <div class="stat-item">
+      <h4>⚡ 0s</h4>
+      <p>Temps de chargement</p>
+    </div>
+    <div class="stat-item">
+      <h4><i class="fab fa-html5"></i> + CSS3</h4>
+      <p>100% natif</p>
+    </div>
+  </div>
+
+  <!-- Zone interactive : compteur + formulaire simple -->
+  <div class="demo-interactive">
+    <div class="demo-title">
+      <i class="fas fa-hand-peace fa-fw" style="color:#2563eb;"></i>
+      <span>Démo interactive — essayez !</span>
+    </div>
+    
+    <!-- COMPTEUR CLIQUABLE -->
+    <div class="counter-box">
+      <div class="click-area">
+        <button class="click-btn" id="decrementBtn" aria-label="diminuer"><i class="fas fa-minus"></i></button>
+        <span class="counter-value" id="counterDisplay">0</span>
+        <button class="click-btn" id="incrementBtn" aria-label="augmenter"><i class="fas fa-plus"></i></button>
+      </div>
+      <button class="btn reset-btn" id="resetCounterBtn"><i class="fas fa-undo-alt"></i> Réinitialiser</button>
+    </div>
+    <div class="message-area" id="counterMessage">
+      👆 Cliquez sur + / - pour modifier le compteur
+    </div>
+
+    <!-- FORMULAIRE SIMPLE sans rechargement -->
+    <div class="form-demo">
+      <div class="form-group">
+        <div class="input-field">
+          <label><i class="far fa-user"></i> Votre nom (démo)</label>
+          <input type="text" id="demoName" placeholder="ex: Lina ou Thomas" autocomplete="off">
+        </div>
+        <button class="submit-demo" id="greetBtn"><i class="fas fa-paper-plane"></i> Salutation</button>
+      </div>
+      <div id="feedbackMsg" class="feedback" style="display: none;"></div>
+    </div>
+  </div>
+  
+  <!-- Petite section citation / rappel Netlify -->
+  <div style="background: #eef2ff30; border-left: 4px solid #2563eb; padding: 1rem 1.5rem; border-radius: 1.2rem; margin-top: 1rem;">
+    <i class="fas fa-cloud-upload-alt" style="color:#2563eb; margin-right: 12px;"></i>
+    <strong>Prêt à être hébergé :</strong> Fichier unique <code style="background:#e2e8f0; padding: 0.2rem 0.5rem; border-radius: 20px;">index.html</code> — aucun build nécessaire. Parfait pour Netlify, GitHub Pages ou tout serveur statique.
+  </div>
+
+  <footer>
+    <p>✨ Démo conçue pour Netlify — HTML/CSS/JS pur, responsive et moderne. <i class="fas fa-heart" style="color:#dc2626;"></i> Par l'équipe creative</p>
+    <p style="margin-top: 0.5rem;">&copy; 2025 • Déployez votre propre site en quelques secondes</p>
+  </footer>
+</div>
+
+<!-- Petit JavaScript interactif, sans dépendances externes (sauf FontAwesome déjà chargé) -->
+<script>
+  (function() {
+    // --- Gestion du compteur central
+    let counter = 0;
+    const counterDisplay = document.getElementById('counterDisplay');
+    const incrementBtn = document.getElementById('incrementBtn');
+    const decrementBtn = document.getElementById('decrementBtn');
+    const resetBtn = document.getElementById('resetCounterBtn');
+    const counterMessageSpan = document.getElementById('counterMessage');
+
+    function updateCounterUI() {
+      if (counterDisplay) counterDisplay.innerText = counter;
+      // petit message amusant basé sur la valeur
+      if (counter === 0) {
+        counterMessageSpan.innerHTML = '✨ Valeur neutre — appuyez sur + ou - !';
+      } else if (counter > 0 && counter < 5) {
+        counterMessageSpan.innerHTML = '📈 Ça monte ! Continuez, c’est interactif.';
+      } else if (counter >= 5 && counter < 12) {
+        counterMessageSpan.innerHTML = '🔥 Super ! Vous aimez cliquer ?';
+      } else if (counter >= 12) {
+        counterMessageSpan.innerHTML = '🚀 Explosion de clics ! Vous êtes un(e) as du compteur.';
+      } else if (counter < 0 && counter > -5) {
+        counterMessageSpan.innerHTML = '❄️ Valeur négative, remontez un peu :)';
+      } else if (counter <= -5) {
+        counterMessageSpan.innerHTML = '🥶 Vous allez dans les profondeurs... utilisez "Réinitialiser"';
+      } else {
+        counterMessageSpan.innerHTML = '👆 Cliquez pour interagir avec le compteur';
+      }
+    }
+
+    if (incrementBtn) {
+      incrementBtn.addEventListener('click', () => {
+        counter++;
+        updateCounterUI();
+      });
+    }
+    if (decrementBtn) {
+      decrementBtn.addEventListener('click', () => {
+        counter--;
+        updateCounterUI();
+      });
+    }
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        counter = 0;
+        updateCounterUI();
+      });
+    }
+    updateCounterUI();
+
+    // --- Gestion du formulaire de salutation
+    const greetBtn = document.getElementById('greetBtn');
+    const demoNameInput = document.getElementById('demoName');
+    const feedbackMsg = document.getElementById('feedbackMsg');
+    
+    function showMessage(text, isError = false) {
+      if (!feedbackMsg) return;
+      feedbackMsg.style.display = 'inline-block';
+      feedbackMsg.innerHTML = isError ? `<i class="fas fa-exclamation-triangle"></i> ${text}` : `<i class="fas fa-smile-wink"></i> ${text}`;
+      feedbackMsg.style.background = isError ? '#ffe6e6' : '#e0f2fe';
+      feedbackMsg.style.color = isError ? '#b91c1c' : '#075985';
+      // auto masquer après 3.5 secondes
+      setTimeout(() => {
+        if (feedbackMsg) feedbackMsg.style.display = 'none';
+      }, 3500);
+    }
+    
+    if (greetBtn) {
+      greetBtn.addEventListener('click', () => {
+        const rawName = demoNameInput ? demoNameInput.value.trim() : '';
+        if (rawName === '') {
+          showMessage('Veuillez saisir un prénom ou pseudo pour la démo !', true);
+          return;
+        }
+        // Limiter la longueur
+        const safeName = rawName.substring(0, 30);
+        showMessage(`👋 Bonjour ${safeName} ! Bienvenue sur votre démo Netlify. Ce site est totalement fonctionnel.`);
+        // Optionnel: petit effet sympa sur le compteur ou l'affichage ? pas nécessaire, juste fun.
+        // On peut aussi en profiter pour faire un petit clin d'oeil
+        const oldCounter = counter;
+        // effet bonus sympa: ajouter un petit +1 virtuel? non, restons simple mais plaisant.
+        // On change uniquement le message, mais on peut ajouter une notification subtile
+        const heroTitle = document.querySelector('.hero h1');
+        if (heroTitle && !window._greetedFlag) {
+          // une seule fois petite surprise amusante
+          heroTitle.style.transition = 'transform 0.2s';
+          heroTitle.style.transform = 'scale(1.01)';
+          setTimeout(() => { if(heroTitle) heroTitle.style.transform = ''; }, 300);
+          window._greetedFlag = true;
+        }
+      });
+    }
+    
+    // Option: entrée du champ input permet d'envoyer avec la touche Entrée
+    if (demoNameInput) {
+      demoNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (greetBtn) greetBtn.click();
+        }
+      });
+    }
+    
+    // --- Gestion du bouton "Explorer la démo" : effet smooth scroll vers la zone interactive
+    const exploreBtn = document.getElementById('exploreBtn');
+    if (exploreBtn) {
+      exploreBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const demoSection = document.querySelector('.demo-interactive');
+        if (demoSection) {
+          demoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // petite animation flash sur le compteur
+          const counterBox = document.querySelector('.counter-value');
+          if (counterBox) {
+            counterBox.style.transform = 'scale(1.08)';
+            setTimeout(() => { if(counterBox) counterBox.style.transform = ''; }, 300);
+          }
+          showMessage('✨ Section interactive atteinte ! Jouez avec les boutons.', false);
+        } else {
+          window.scrollTo({ top: document.body.scrollHeight * 0.6, behavior: 'smooth' });
+        }
+      });
+    }
+    
+    // Gestion des cartes "En savoir plus" et "Voir le style" pour montrer une alerte élégante (pas de liens factices)
+    const cardLinks = document.querySelectorAll('.card-link');
+    cardLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showMessage(`💡 Fonctionnalité illustrative — Cette démo est prête à être étendue avec vos propres projets !`, false);
+      });
+    });
+    
+    // Simulation petite mise à jour des visites (stat non persistante mais jolie)
+    let visitCount = 1240;
+    const statVisitsSpan = document.getElementById('statVisits');
+    if (statVisitsSpan) {
+      // incrémente de manière aléatoire lors du scroll ou au chargement? on va ajouter un petit +1 virtuel après 2 secondes pour le fun
+      setTimeout(() => {
+        visitCount = visitCount + Math.floor(Math.random() * 12) + 1;
+        let formatted = '';
+        if (visitCount > 999) formatted = (visitCount / 1000).toFixed(1) + 'k';
+        else formatted = visitCount.toString();
+        statVisitsSpan.innerHTML = `+${formatted}`;
+      }, 1500);
+    }
+    
+    // Si on veut réagir sur les cartes ou autre pour impression "démo dynamique"
+    console.log('✅ Démo Netlify prête — interface interactive chargée');
+  })();
+</script>
+</body>
+</html>
