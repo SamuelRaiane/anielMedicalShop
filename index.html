@@ -4,209 +4,468 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Suivi de commande - Aniel Medical SHOP</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { figma: { purple: '#6366F1', pink: '#EC4899', coral: '#F43F5E', amber: '#F59E0B', mint: '#10B981', blue: '#3B82F6', dark: '#0F172A', light: '#F8FAFC', teal: '#14B8A6' } },
-                    boxShadow: { 'figma-sm': '0 2px 8px rgba(0,0,0,0.04)', 'figma-md': '0 12px 34px rgba(99,102,241,0.06)', 'premium': '0 25px 50px -12px rgba(0,0,0,0.15)' }
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        figma: {
+                            purple: '#6366F1',
+                            pink: '#EC4899',
+                            coral: '#F43F5E',
+                            amber: '#F59E0B',
+                            mint: '#10B981',
+                            blue: '#3B82F6',
+                            dark: '#0F172A',
+                            light: '#F8FAFC',
+                            teal: '#14B8A6'
+                        }
+                    },
+                    boxShadow: {
+                        'figma-sm': '0 2px 8px rgba(0, 0, 0, 0.04)',
+                        'figma-md': '0 12px 34px rgba(99, 102, 241, 0.06)',
+                        'figma-lg': '0 20px 40px rgba(15, 23, 42, 0.08)',
+                        'premium': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                    }
                 }
             }
         }
     </script>
     <style>
-        body { background: linear-gradient(145deg, #F8FAFC 0%, #EFF3F8 100%); min-height: 100vh; }
-        .gradient-text { background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gradient-bg { background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%); }
-        .medical-gradient { background: linear-gradient(135deg, #0F766E 0%, #6366F1 100%); }
-        .card-hover { transition: all 0.3s; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 25px 40px -12px rgba(0,0,0,0.15); }
-        @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-slide { animation: fadeSlideUp 0.5s ease-out; }
-        .timeline-container { display: flex; align-items: center; justify-content: center; }
-        .timeline-step { display: flex; flex-direction: column; align-items: center; }
-        .timeline-dot { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .timeline-line { height: 3px; width: 40px; border-radius: 3px; margin: 0 -2px; align-self: center; margin-bottom: 24px; }
-        .timeline-label { font-size: 10px; font-weight: 700; margin-top: 8px; white-space: nowrap; }
-        @media (min-width: 640px) { .timeline-dot { width: 52px; height: 52px; } .timeline-line { width: 60px; } .timeline-label { font-size: 11px; } }
-        @media (min-width: 768px) { .timeline-line { width: 80px; } .timeline-label { font-size: 12px; } }
+        body {
+            background: linear-gradient(145deg, #F8FAFC 0%, #EFF3F8 100%);
+            min-height: 100vh;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
+        }
+        .medical-gradient {
+            background: linear-gradient(135deg, #0F766E 0%, #6366F1 100%);
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.15);
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+        .fade-slide {
+            animation: fadeSlideUp 0.5s ease-out;
+        }
+
+        /* ========== TIMELINE CORRIGÉE ========== */
+        .timeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .timeline-dot {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .timeline-line {
+            height: 3px;
+            width: 40px;
+            border-radius: 3px;
+            margin: 0 -2px;
+            align-self: center;
+            margin-bottom: 24px;
+        }
+        .timeline-label {
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 8px;
+            white-space: nowrap;
+        }
+        @media (min-width: 640px) {
+            .timeline-dot { width: 52px; height: 52px; font-size: 1.1rem; }
+            .timeline-line { width: 60px; }
+            .timeline-label { font-size: 11px; }
+        }
+        @media (min-width: 768px) {
+            .timeline-line { width: 80px; }
+            .timeline-label { font-size: 12px; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #E2E8F0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366F1; }
+        
+        .info-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .info-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94A3B8;
+            min-width: 110px;
+        }
+        .info-value {
+            font-weight: 600;
+            color: #1E293B;
+            font-size: 0.9rem;
+        }
+        .product-tag {
+            background: #F1F5F9;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #475569;
+        }
     </style>
 </head>
 <body class="font-sans text-slate-800 antialiased p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto">
-        <header class="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-figma-md border mb-8 card-hover">
+        <!-- Header stylisé -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-figma-md border border-white/50 card-hover">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl medical-gradient flex items-center justify-center text-white text-2xl shadow-lg"><i class="fa-solid fa-capsules"></i></div>
+                <div class="w-14 h-14 rounded-2xl medical-gradient flex items-center justify-center text-white text-2xl shadow-lg shadow-teal-500/30 animate-pulse" style="animation: pulse-ring 2s infinite;">
+                    <i class="fa-solid fa-capsules"></i>
+                </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-extrabold">Aniel Medical <span class="gradient-text">SHOP</span></h1>
-                    <p class="text-xs text-slate-400 mt-1">Suivez votre commande en temps réel</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+                        Aniel Medical <span class="gradient-text">SHOP</span>
+                    </h1>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-xs font-medium text-slate-400">Suivez votre commande en temps réel</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <div id="searchSection">
-            <div class="bg-white/90 backdrop-blur-sm p-8 md:p-10 rounded-3xl shadow-premium border text-center max-w-2xl mx-auto card-hover">
-                <div class="w-24 h-24 rounded-3xl medical-gradient flex items-center justify-center mx-auto mb-5 shadow-xl"><i class="fa-solid fa-magnifying-glass text-white text-3xl"></i></div>
-                <h2 class="text-3xl font-extrabold mb-3">Suivi de commande</h2>
-                <p class="text-slate-500 text-sm mb-7">Entrez votre numéro de commande</p>
-                <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                    <input type="text" id="orderIdInput" class="flex-1 px-5 py-3.5 rounded-xl border-2 border-slate-200 focus:border-indigo-400 text-center font-mono text-base" placeholder="Ex: art28" autocomplete="off">
-                    <button id="searchBtn" class="gradient-bg text-white px-7 py-3.5 rounded-xl font-bold shadow-lg flex items-center gap-2"><i class="fa-solid fa-truck-fast"></i> Suivre</button>
+        <!-- Zone de recherche -->
+        <div id="searchSection" class="mb-8">
+            <div class="bg-white/90 backdrop-blur-sm p-8 md:p-10 rounded-3xl shadow-premium border border-white/60 text-center max-w-2xl mx-auto card-hover">
+                <div class="w-24 h-24 rounded-3xl medical-gradient flex items-center justify-center mx-auto mb-5 shadow-xl shadow-teal-500/30">
+                    <i class="fa-solid fa-magnifying-glass text-white text-3xl"></i>
                 </div>
+                <h2 class="text-3xl font-extrabold text-figma-dark mb-3">Suivi de commande</h2>
+                <p class="text-slate-500 text-sm mb-7">Entrez votre numéro de commande pour suivre son évolution en temps réel</p>
+                
+                <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input type="text" id="orderIdInput" class="flex-1 px-5 py-3.5 rounded-xl border-2 border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition-all text-center font-mono tracking-wider text-base bg-white" placeholder="Ex: art28, med45" autocomplete="off">
+                    <button id="searchBtn" class="gradient-bg text-white px-7 py-3.5 rounded-xl font-bold shadow-lg shadow-indigo-500/30 hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02]">
+                        <i class="fa-solid fa-truck-fast"></i> Suivre
+                    </button>
+                </div>
+                
                 <div id="errorMsg" class="text-red-500 text-sm mt-3 hidden bg-red-50 p-3 rounded-xl"></div>
-                <div id="loadingMsg" class="text-indigo-600 text-sm mt-3 hidden items-center gap-2"><div class="w-5 h-5 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div> Recherche...</div>
+                <div id="loadingMsg" class="text-indigo-600 text-sm mt-3 hidden items-center justify-center gap-2">
+                    <div class="w-5 h-5 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div> Recherche en cours...
+                </div>
+                
+                <div class="mt-8 pt-5 border-t border-slate-100">
+                    <p class="text-xs text-slate-400"><i class="fa-regular fa-credit-card mr-1"></i> Votre numéro se trouve sur votre confirmation de commande</p>
+                </div>
             </div>
         </div>
 
+        <!-- Résultat -->
         <div id="resultContainer" class="hidden fade-slide"></div>
 
+        <!-- Footer -->
         <footer class="mt-12 text-center text-xs text-slate-400 pb-8">
             <p>© 2026 Aniel Medical SHOP</p>
-            <p class="mt-1">Besoin d'aide ? <a href="https://www.facebook.com/profile.php?id=61587421085556" class="underline hover:text-indigo-500">Facebook</a> | <a href="https://wa.me/261343604545" class="underline hover:text-indigo-500">WhatsApp : 034 36 045 45</a></p>
+            <p class="mt-1">Besoin d'aide ? <a href="https://www.facebook.com/profile.php?id=61587421085556" class="underline hover:text-indigo-500 transition">Facebook : Aniel Medical SHOP</a> | <a href="https://wa.me/261343604545" target="_blank" class="underline hover:text-indigo-500 transition">WhatsApp : 034 36 045 45</a></p>
         </footer>
     </div>
 
     <script>
-        // URL PERMANENTE du Gist (sans hash, pointe toujours vers la dernière version)
+        // ⚠️ URL PERMANENTE : pointe toujours vers la dernière version du Gist
         const DATA_URL = "https://gist.githubusercontent.com/SamuelRaiane/9fc099c832113b7764b85dc4e189a008/raw/aniel_db.json";
+        
         let orders = [];
+        let dataLoaded = false;
 
         async function loadData() {
+            // Toujours recharger (pas de cache) pour avoir les dernières modifications
             try {
                 const url = DATA_URL + "?t=" + Date.now();
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("HTTP " + response.status);
-                orders = JSON.parse(await response.text()).orders || [];
+                const response = await fetch(url, { cache: 'no-cache' });
+                if (!response.ok) throw new Error();
+                const text = await response.text();
+                const db = JSON.parse(text);
+                orders = db.orders || [];
+                dataLoaded = true;
                 return true;
-            } catch(e) { console.error(e); return false; }
+            } catch(e) {
+                console.error("Erreur chargement:", e);
+                return false;
+            }
         }
 
-        function formatDate(d) { return d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non spécifiée'; }
-        function esc(s) { return s ? s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])) : ''; }
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Non spécifiée';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+        }
 
         async function performSearch() {
-            const orderId = document.getElementById('orderIdInput').value.trim();
-            const err = document.getElementById('errorMsg');
-            const load = document.getElementById('loadingMsg');
-            err.classList.add('hidden');
-            document.getElementById('resultContainer').classList.add('hidden');
-            if (!orderId) { err.textContent = "Entrez un numéro"; err.classList.remove('hidden'); return; }
-            load.classList.remove('hidden'); load.classList.add('flex');
-            if (!await loadData()) { load.classList.remove('flex'); load.classList.add('hidden'); err.textContent = "Service indisponible."; err.classList.remove('hidden'); return; }
-            load.classList.remove('flex'); load.classList.add('hidden');
+            const input = document.getElementById('orderIdInput');
+            const orderId = input.value.trim();
+            const errorDiv = document.getElementById('errorMsg');
+            const loadingDiv = document.getElementById('loadingMsg');
+            const searchSection = document.getElementById('searchSection');
+            const resultContainer = document.getElementById('resultContainer');
+
+            errorDiv.classList.add('hidden');
+            if (!orderId) {
+                errorDiv.textContent = "Veuillez entrer un numéro de commande";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            loadingDiv.classList.remove('hidden');
+            loadingDiv.classList.add('flex');
+            const loaded = await loadData();
+            loadingDiv.classList.remove('flex');
+            loadingDiv.classList.add('hidden');
+
+            if (!loaded) {
+                errorDiv.textContent = "Service momentanément indisponible. Veuillez réessayer.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
             const order = orders.find(o => o.id.toLowerCase() === orderId.toLowerCase());
-            if (!order) { err.textContent = "Commande introuvable."; err.classList.remove('hidden'); return; }
-            document.getElementById('searchSection').classList.add('hidden');
-            document.getElementById('resultContainer').classList.remove('hidden');
-            showOrder(order);
+            if (!order) {
+                errorDiv.textContent = `Aucune commande trouvée pour "${orderId}". Vérifiez le numéro.`;
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            searchSection.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            renderOrderPremium(order);
         }
 
-        function showOrder(order) {
-            const items = order.items.filter(i => !i.hidden);
-            const livré = items.every(i => i.status === "livré");
-            const récupéré = items.every(i => i.status === "récupéré");
-            const done = livré || récupéré;
-            const transit = items.some(i => i.status === "en livraison");
-            const ready = items.some(i => i.status === "prêt à livrer" || i.status === "prêt à récupérer");
+        // ========== TIMELINE CORRIGÉE (cercles + traits alignés) ==========
+        function renderTimeline(steps) {
+            let html = '<div class="timeline-container">';
+            
+            steps.forEach((step, idx) => {
+                let dotClass, dotContent;
+                if (step.completed) {
+                    dotClass = 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30';
+                    dotContent = '<i class="fa-solid fa-check text-xs"></i>';
+                } else if (step.active) {
+                    dotClass = 'bg-indigo-600 text-white ring-4 ring-indigo-200 shadow-lg shadow-indigo-500/40';
+                    dotContent = '<i class="fa-solid fa-ellipsis text-xs"></i>';
+                } else {
+                    dotClass = 'bg-slate-200 text-slate-400';
+                    dotContent = '<i class="fa-regular fa-circle text-xs"></i>';
+                }
+                
+                const labelClass = step.completed ? 'text-slate-700' : (step.active ? 'text-indigo-600 font-extrabold' : 'text-slate-400');
+                const lineClass = step.completed ? 'bg-emerald-500' : 'bg-slate-200';
+                
+                // Cercle
+                html += `
+                    <div class="timeline-step">
+                        <div class="timeline-dot ${dotClass}">${dotContent}</div>
+                        <div class="timeline-label ${labelClass}">${step.name}</div>
+                    </div>`;
+                
+                // Trait entre les cercles (sauf après le dernier)
+                if (idx < steps.length - 1) {
+                    html += `<div class="timeline-line ${lineClass}"></div>`;
+                }
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        function renderOrderPremium(order) {
+            const container = document.getElementById('resultContainer');
+            
+            const visibleItems = order.items.filter(i => !i.hidden);
+            const allLivré = visibleItems.every(i => i.status === "livré");
+            const allRécupéré = visibleItems.every(i => i.status === "récupéré");
+            const allDone = allLivré || allRécupéré;
+            const hasInDelivery = visibleItems.some(i => i.status === "en livraison");
+            const hasReady = visibleItems.some(i => i.status === "prêt à livrer" || i.status === "prêt à récupérer");
 
             const steps = [
-                { n: "Confirmée", ok: true },
-                { n: "Préparée", ok: ready || transit || done },
-                { n: "En transit", ok: transit || done, act: transit && !done },
-                { n: récupéré ? "Récupérée" : "Livrée", ok: done }
+                { name: "Confirmée", completed: true },
+                { name: "Préparée", completed: hasReady || hasInDelivery || allDone },
+                { name: "En transit", completed: hasInDelivery || allDone, active: hasInDelivery && !allDone },
+                { name: allRécupéré ? "Récupérée" : "Livrée", completed: allDone }
             ];
 
-            let timeline = '<div class="timeline-container">';
-            steps.forEach((s, i) => {
-                let dot = s.ok ? 'bg-emerald-500 text-white' : s.act ? 'bg-indigo-600 text-white ring-4 ring-indigo-200' : 'bg-slate-200 text-slate-400';
-                let icon = s.ok ? '<i class="fa-solid fa-check text-xs"></i>' : s.act ? '<i class="fa-solid fa-ellipsis text-xs"></i>' : '<i class="fa-regular fa-circle text-xs"></i>';
-                let line = s.ok ? 'bg-emerald-500' : 'bg-slate-200';
-                timeline += `<div class="timeline-step"><div class="timeline-dot ${dot}">${icon}</div><div class="timeline-label ${s.ok?'text-slate-700':s.act?'text-indigo-600 font-extrabold':'text-slate-400'}">${s.n}</div></div>`;
-                if (i < steps.length - 1) timeline += `<div class="timeline-line ${line}"></div>`;
-            });
-            timeline += '</div>';
+            const timelineHtml = renderTimeline(steps);
 
             let itemsHtml = '';
-            items.forEach((it, idx) => {
+            visibleItems.forEach((item, idx) => {
+                const coutureStatus = item.coutureStatus === 'terminé' ? 'Terminé' : (item.coutureStatus === 'en cours' ? 'En cours' : 'En attente');
                 itemsHtml += `
-                    <div class="p-5 rounded-2xl bg-slate-50/50 border border-slate-100">
-                        <div class="flex items-center gap-2 mb-3"><span class="w-7 h-7 rounded-full gradient-bg text-white text-xs font-bold flex items-center justify-center">${idx+1}</span><span class="font-extrabold text-slate-800">${it.quantity}x ${it.productType||'Article'} - Taille ${it.size}</span></div>
-                        <div class="grid grid-cols-2 gap-2 text-sm">
-                            <div><span class="text-slate-400 text-xs">Tissu</span><br><span class="font-semibold">${it.fabricType||'-'}</span></div>
-                            <div><span class="text-slate-400 text-xs">Couleur</span><br><span class="font-semibold">${it.color||'-'}</span></div>
-                            <div><span class="text-slate-400 text-xs">Style</span><br><span class="font-semibold">${it.style||'-'}</span></div>
+                    <div class="group p-5 rounded-2xl bg-slate-50/50 hover:bg-white transition-all duration-300 border border-slate-100 hover:border-indigo-200 hover:shadow-md">
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-2 mb-3">
+                                    <span class="w-7 h-7 rounded-full gradient-bg text-white text-xs font-bold flex items-center justify-center">${idx+1}</span>
+                                    <span class="font-extrabold text-slate-800 text-base">${item.quantity}x ${item.productType || 'Vareuse'} - Taille ${item.size}</span>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 text-sm">
+                                    <div><span class="text-slate-400 text-xs">Tissu</span><br><span class="font-semibold">${item.fabricType || '-'}</span></div>
+                                    <div><span class="text-slate-400 text-xs">Couleur</span><br><span class="font-semibold">${item.color || '-'}</span></div>
+                                    <div><span class="text-slate-400 text-xs">Style</span><br><span class="font-semibold">${item.style || '-'}</span></div>
+                                    <div><span class="text-slate-400 text-xs">Manche</span><br><span class="font-semibold">${item.sleeve || '-'}</span></div>
+                                    <div><span class="text-slate-400 text-xs">Col</span><br><span class="font-semibold">${item.collar || '-'}</span></div>
+                                    <div><span class="text-slate-400 text-xs">Fermeture</span><br><span class="font-semibold">${item.closure || '-'}</span></div>
+                                </div>
+                                ${item.persoText ? `<div class="mt-3 p-2 bg-indigo-50 rounded-xl text-sm"><span class="font-semibold text-indigo-600">Broderie :</span> ${escapeHtml(item.persoText)}</div>` : ''}
+                                <div class="flex flex-wrap gap-4 mt-3 pt-2 border-t border-slate-200 text-sm">
+                                    <span class="flex items-center gap-1"><span class="text-slate-400">Couture :</span> <strong class="${item.coutureStatus === 'terminé' ? 'text-emerald-600' : 'text-amber-600'}">${coutureStatus}</strong></span>
+                                    ${item.broderieStatus ? `<span class="flex items-center gap-1"><span class="text-slate-400">Broderie :</span> <strong>${item.broderieStatus === 'terminé' ? 'Terminé' : (item.broderieStatus === 'en cours' ? 'En cours' : 'À faire')}</strong></span>` : ''}
+                                </div>
+                            </div>
                         </div>
-                        ${it.persoText ? `<div class="mt-2 p-2 bg-indigo-50 rounded-xl text-sm"><span class="font-semibold text-indigo-600">Broderie:</span> ${esc(it.persoText)}</div>` : ''}
-                        <div class="flex gap-4 mt-2 pt-2 border-t text-sm">
-                            <span>Couture: <strong>${it.coutureStatus==='terminé'?'✅ Terminé':it.coutureStatus==='en cours'?'🔵 En cours':'⏳ À faire'}</strong></span>
-                            ${it.broderieStatus?`<span>Broderie: <strong>${it.broderieStatus==='terminé'?'✅ Terminé':'🔵 En cours'}</strong></span>`:''}
-                        </div>
-                    </div>`;
+                    </div>
+                `;
             });
 
-            const total = (order.totalPrice||0) + (order.shippingCost||0);
-            const reste = total - (order.advance||0);
+            const totalGeneral = (order.totalPrice || 0) + (order.shippingCost || 0);
+            const resteAPayer = totalGeneral - (order.advance || 0);
 
-            document.getElementById('resultContainer').innerHTML = `
+            const html = `
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-white p-6 rounded-3xl shadow-figma-md border">
-                            <div class="flex justify-between items-center gap-4 mb-6">
-                                <div><p class="text-xs font-bold uppercase text-slate-400">Livraison estimée</p><p class="text-2xl font-extrabold">${formatDate(order.dueDate)} ${order.dueTime!=='aucun'?'· '+order.dueTime:''}</p></div>
-                                <div class="px-4 py-2 rounded-xl bg-indigo-50"><p class="text-sm font-bold"><i class="fa-solid fa-location-dot text-teal-500 mr-1"></i>${order.deliveryZone} ${order.deliveryPlace||''}</p></div>
+                        <div class="bg-white p-6 md:p-7 rounded-3xl shadow-figma-md border border-slate-100 card-hover">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                                <div>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Livraison estimée</p>
+                                    <p class="text-2xl font-extrabold text-figma-dark">${formatDate(order.dueDate)} ${order.dueTime !== 'aucun' ? '· ' + order.dueTime : ''}</p>
+                                </div>
+                                <div class="px-4 py-2 rounded-xl bg-indigo-50 border border-indigo-100">
+                                    <p class="text-xs font-medium text-slate-500">Zone de livraison</p>
+                                    <p class="text-sm font-bold text-slate-700"><i class="fa-solid fa-location-dot text-teal-500 mr-1"></i> ${order.deliveryZone} ${order.deliveryPlace ? '· ' + order.deliveryPlace : ''}</p>
+                                </div>
                             </div>
-                            ${timeline}
+                            <div class="my-6">${timelineHtml}</div>
                         </div>
-                        <div class="bg-white p-6 rounded-3xl shadow-figma-md border">
-                            <h3 class="text-lg font-extrabold mb-4">Détails</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                <div><span class="text-slate-400">ID:</span> <span class="font-mono font-bold">${order.id}</span></div>
-                                <div><span class="text-slate-400">Client:</span> <span class="font-bold">${esc(order.clientName)}</span></div>
-                                <div><span class="text-slate-400">Commandé le:</span> ${formatDate(order.orderDate)}</div>
-                                <div><span class="text-slate-400">Livraison:</span> ${formatDate(order.dueDate)} ${order.dueTime!=='aucun'?order.dueTime:''}</div>
+
+                        <div class="bg-white p-6 md:p-7 rounded-3xl shadow-figma-md border border-slate-100 card-hover">
+                            <h3 class="text-lg font-extrabold text-figma-dark mb-5 flex items-center gap-2"><i class="fa-solid fa-circle-info text-indigo-500 text-base"></i> Détails de la commande</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="info-row"><span class="info-label">ID commande</span><span class="info-value font-mono">${order.id}</span></div>
+                                <div class="info-row"><span class="info-label">Destinataire</span><span class="info-value">${escapeHtml(order.clientName)}</span></div>
+                                <div class="info-row"><span class="info-label">Date commande</span><span class="info-value">${formatDate(order.orderDate)}</span></div>
+                                <div class="info-row"><span class="info-label">Livraison prévue</span><span class="info-value">${formatDate(order.dueDate)}</span></div>
+                                <div class="info-row"><span class="info-label">Heure livraison</span><span class="info-value">${order.dueTime !== 'aucun' ? order.dueTime : 'Non renseignée'}</span></div>
+                                <div class="info-row"><span class="info-label">Lieu livraison</span><span class="info-value">${order.deliveryPlace || 'Non spécifié'}</span></div>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-3xl shadow-figma-md border">
-                            <h3 class="text-lg font-extrabold mb-4">Articles <span class="text-sm bg-slate-100 px-2 py-0.5 rounded-full">${items.length}</span></h3>
-                            <div class="space-y-3">${itemsHtml}</div>
+
+                        <div class="bg-white p-6 md:p-7 rounded-3xl shadow-figma-md border border-slate-100 card-hover">
+                            <h3 class="text-lg font-extrabold text-figma-dark mb-5 flex items-center gap-2"><i class="fa-solid fa-bag-shopping text-amber-500 text-base"></i> Articles commandés <span class="text-sm bg-slate-100 px-2 py-0.5 rounded-full">${visibleItems.length}</span></h3>
+                            <div class="space-y-4">${itemsHtml}</div>
                         </div>
                     </div>
+
                     <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-3xl shadow-figma-md border">
-                            <h3 class="text-lg font-extrabold mb-4">Récapitulatif</h3>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between py-2 border-b"><span>Articles</span><span class="font-bold">${(order.totalPrice||0).toLocaleString()} Ar</span></div>
-                                <div class="flex justify-between py-2 border-b"><span>Livraison</span><span class="font-bold text-teal-600">${(order.shippingCost||0).toLocaleString()} Ar</span></div>
-                                <div class="flex justify-between py-3 text-base font-extrabold"><span>TOTAL</span><span class="gradient-text text-xl">${total.toLocaleString()} Ar</span></div>
-                                <div class="flex justify-between py-2 bg-red-50 rounded-xl px-3"><span class="text-red-600">Acompte</span><span class="text-red-600 font-bold">- ${(order.advance||0).toLocaleString()} Ar</span></div>
-                                <div class="flex justify-between py-3 text-lg font-extrabold text-indigo-700 border-t-2 border-indigo-200"><span>RESTE À PAYER</span><span>${reste.toLocaleString()} Ar</span></div>
+                        <div class="bg-gradient-to-br from-white to-slate-50 p-6 rounded-3xl shadow-figma-md border border-slate-100 card-hover">
+                            <h3 class="text-lg font-extrabold text-figma-dark mb-5 flex items-center gap-2"><i class="fa-solid fa-receipt text-figma-purple text-base"></i> Récapitulatif</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Sous-total articles</span><span class="font-bold">${(order.totalPrice || 0).toLocaleString()} Ar</span></div>
+                                <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Frais de livraison</span><span class="font-bold text-teal-600">${(order.shippingCost || 0).toLocaleString()} Ar</span></div>
+                                <div class="flex justify-between py-3 text-base font-extrabold"><span>TOTAL TTC</span><span class="gradient-text text-xl">${totalGeneral.toLocaleString()} Ar</span></div>
+                                <div class="flex justify-between py-2 bg-red-50 rounded-xl px-3 -mx-1"><span class="text-red-600 font-semibold">Acompte versé</span><span class="text-red-600 font-bold">- ${(order.advance || 0).toLocaleString()} Ar</span></div>
+                                <div class="flex justify-between py-3 text-lg font-extrabold text-indigo-700 border-t-2 border-indigo-200 mt-2"><span>RESTE À PAYER</span><span>${resteAPayer.toLocaleString()} Ar</span></div>
                             </div>
                         </div>
-                        <div class="medical-gradient p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
+
+                        <div class="medical-gradient p-6 rounded-3xl text-white shadow-xl shadow-teal-500/20 relative overflow-hidden card-hover">
+                            <div class="absolute right-0 bottom-0 translate-x-6 translate-y-6 opacity-10 text-8xl"><i class="fa-solid fa-headset"></i></div>
                             <h4 class="font-extrabold text-xl mb-2">Besoin d'assistance ?</h4>
+                            <p class="text-sm text-white/80 mb-5 leading-relaxed">Contacter notre équipe 24h/24 - 7j/7 sur :</p>
                             <div class="flex flex-wrap gap-2">
-                                <a href="https://www.facebook.com/profile.php?id=61587421085556" target="_blank" class="bg-white/20 text-white text-xs font-bold px-4 py-2.5 rounded-xl"><i class="fa-brands fa-facebook"></i> Facebook</a>
-                                <a href="https://wa.me/261343604545" target="_blank" class="bg-white/20 text-white text-xs font-bold px-4 py-2.5 rounded-xl"><i class="fa-brands fa-whatsapp"></i> 034 36 045 45</a>
+                                <a href="https://www.facebook.com/profile.php?id=61587421085556" target="_blank" class="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-white hover:text-indigo-600 transition-all flex items-center gap-2"><i class="fa-brands fa-facebook text-sm"></i> Aniel Medical SHOP</a>
+                                <a href="https://wa.me/261343604545" target="_blank" class="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-white hover:text-indigo-600 transition-all flex items-center gap-2"><i class="fa-brands fa-whatsapp text-sm"></i> 034 36 045 45</a>
                             </div>
                         </div>
-                        <button id="backToSearchBtn" class="w-full py-3.5 bg-white border-2 border-slate-200 rounded-xl font-bold"><i class="fa-solid fa-arrow-left mr-2"></i>Autre commande</button>
+
+                        <button id="backToSearchBtn" class="w-full py-3.5 bg-white border-2 border-slate-200 rounded-xl font-bold text-slate-600 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-left"></i> Suivre une autre commande</button>
                     </div>
-                </div>`;
-            document.getElementById('backToSearchBtn').addEventListener('click', () => {
-                document.getElementById('searchSection').classList.remove('hidden');
-                document.getElementById('resultContainer').classList.add('hidden');
-                document.getElementById('orderIdInput').value = '';
-                document.getElementById('orderIdInput').focus();
-            });
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            const backBtn = document.getElementById('backToSearchBtn');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    document.getElementById('searchSection').classList.remove('hidden');
+                    document.getElementById('resultContainer').classList.add('hidden');
+                    document.getElementById('orderIdInput').value = '';
+                    document.getElementById('orderIdInput').focus();
+                });
+            }
         }
 
         document.getElementById('searchBtn').addEventListener('click', performSearch);
-        document.getElementById('orderIdInput').addEventListener('keypress', e => { if(e.key==='Enter') performSearch(); });
+        document.getElementById('orderIdInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        loadData();
     </script>
 </body>
 </html>
