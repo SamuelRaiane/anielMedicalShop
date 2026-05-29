@@ -339,9 +339,9 @@
             const hasReady = visibleItems.some(i => i.status === "prêt à livrer" || i.status === "prêt à récupérer");
 
             const steps = [
-                { name: "Confirmée", completed: true },
-                { name: "Préparée", completed: hasReady || hasInDelivery || allDone },
-                { name: "En transit", completed: hasInDelivery || allDone, active: hasInDelivery && !allDone },
+                { name: "En cours", completed: true },
+                { name: "Prêt", completed: hasReady || hasInDelivery || allDone },
+                { name: "En Livraison", completed: hasInDelivery || allDone, active: hasInDelivery && !allDone },
                 { name: allRécupéré ? "Récupérée" : "Livrée", completed: allDone }
             ];
 
