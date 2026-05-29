@@ -226,17 +226,14 @@
         const DATA_URL = "https://gist.githubusercontent.com/SamuelRaiane/c08a452825fb0187029e271bbaac843a/raw/database.json";
         
         let orders = [];
-        let dataLoaded = false;
 
         async function loadData() {
-            if (dataLoaded) return true;
             try {
-                const response = await fetch(DATA_URL, { cache: 'no-cache' });
+                const url = DATA_URL + "?t=" + Date.now();
+                const response = await fetch(url, { cache: 'no-cache' });
                 if (!response.ok) throw new Error();
-                const text = await response.text();
-                const db = JSON.parse(text);
+                const db = JSON.parse(await response.text());
                 orders = db.orders || [];
-                dataLoaded = true;
                 return true;
             } catch(e) {
                 console.error("Erreur chargement:", e);
@@ -248,12 +245,6 @@
             if (!dateStr) return 'Non spécifiée';
             const d = new Date(dateStr);
             return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-        }
-
-        function formatDateTime(dateStr) {
-            if (!dateStr) return '';
-            const d = new Date(dateStr);
-            return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
         }
 
         function escapeHtml(str) {
@@ -277,7 +268,9 @@
             }
 
             loadingDiv.classList.remove('hidden');
+            loadingDiv.classList.add('flex');
             const loaded = await loadData();
+            loadingDiv.classList.remove('flex');
             loadingDiv.classList.add('hidden');
 
             if (!loaded) {
@@ -290,8 +283,6 @@
             if (!order) {
                 errorDiv.textContent = `Aucune commande trouvée pour "${orderId}". Vérifiez le numéro.`;
                 errorDiv.classList.remove('hidden');
-                resultContainer.classList.add('hidden');
-                searchSection.classList.remove('hidden');
                 return;
             }
 
@@ -346,30 +337,6 @@
             const allDone = allLivré || allRécupéré;
             const hasInDelivery = visibleItems.some(i => i.status === "en livraison");
             const hasReady = visibleItems.some(i => i.status === "prêt à livrer" || i.status === "prêt à récupérer");
-
-            let globalStatusText = "En cours de traitement";
-            let globalStatusBadge = "bg-amber-100 text-amber-700 border-amber-200";
-            let statusIcon = "fa-clock";
-            if (hasReady) { 
-                globalStatusText = "Prêt à être expédié"; 
-                globalStatusBadge = "bg-blue-100 text-blue-700 border-blue-200";
-                statusIcon = "fa-box-open";
-            }
-            if (hasInDelivery) { 
-                globalStatusText = "En livraison"; 
-                globalStatusBadge = "bg-indigo-100 text-indigo-700 border-indigo-200";
-                statusIcon = "fa-truck";
-            }
-            if (allLivré) { 
-                globalStatusText = "Livré avec succès"; 
-                globalStatusBadge = "bg-emerald-100 text-emerald-700 border-emerald-200";
-                statusIcon = "fa-check-circle";
-            }
-            if (allRécupéré) { 
-                globalStatusText = "Récupéré par le client"; 
-                globalStatusBadge = "bg-emerald-100 text-emerald-700 border-emerald-200";
-                statusIcon = "fa-hand-peace";
-            }
 
             const steps = [
                 { name: "Confirmée", completed: true },
@@ -516,8 +483,6 @@
         document.getElementById('orderIdInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
         });
-
-        loadData();
     </script>
 </body>
 </html>
