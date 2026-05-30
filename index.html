@@ -12,7 +12,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <!-- Supabase client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -80,7 +82,7 @@
             animation: fadeSlideUp 0.5s ease-out;
         }
 
-        /* ========== TIMELINE CORRIGÉE ========== */
+        /* ========== TIMELINE ========== */
         .timeline-container {
             display: flex;
             align-items: center;
@@ -195,7 +197,7 @@
                 <p class="text-slate-500 text-sm mb-7">Entrez votre numéro de commande pour suivre son évolution en temps réel</p>
                 
                 <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                    <input type="text" id="orderIdInput" class="flex-1 px-5 py-3.5 rounded-xl border-2 border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition-all text-center font-mono tracking-wider text-base bg-white" placeholder="Ex: art28, med45" autocomplete="off">
+                    <input type="text" id="orderIdInput" class="flex-1 px-5 py-3.5 rounded-xl border-2 border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition-all text-center font-mono tracking-wider text-base bg-white" placeholder="Ex: ABC123DEF4" autocomplete="off">
                     <button id="searchBtn" class="gradient-bg text-white px-7 py-3.5 rounded-xl font-bold shadow-lg shadow-indigo-500/30 hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02]">
                         <i class="fa-solid fa-truck-fast"></i> Suivre
                     </button>
@@ -223,23 +225,10 @@
     </div>
 
     <script>
-        const DATA_URL = "https://gist.githubusercontent.com/SamuelRaiane/c08a452825fb0187029e271bbaac843a/raw/database.json";
-        
-        let orders = [];
-
-        async function loadData() {
-            try {
-                const url = DATA_URL + "?t=" + Date.now();
-                const response = await fetch(url, { cache: 'no-cache' });
-                if (!response.ok) throw new Error();
-                const db = JSON.parse(await response.text());
-                orders = db.orders || [];
-                return true;
-            } catch(e) {
-                console.error("Erreur chargement:", e);
-                return false;
-            }
-        }
+        // Configuration Supabase (clé anon, sûre à publier)
+        const SUPABASE_URL = 'https://pabsvguwligbtfeodqfl.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBhYnN2Z3V3bGlnYnRmZW9kcWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNDA1MDksImV4cCI6MjA5NTYxNjUwOX0.IPs0ofNQ8J5IY8IM6SQuWt-QrdPaelBvY9R_jlMtXaY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         function formatDate(dateStr) {
             if (!dateStr) return 'Non spécifiée';
@@ -254,7 +243,7 @@
 
         async function performSearch() {
             const input = document.getElementById('orderIdInput');
-            const orderId = input.value.trim();
+            const orderId = input.value.trim().toUpperCase();
             const errorDiv = document.getElementById('errorMsg');
             const loadingDiv = document.getElementById('loadingMsg');
             const searchSection = document.getElementById('searchSection');
@@ -269,29 +258,35 @@
 
             loadingDiv.classList.remove('hidden');
             loadingDiv.classList.add('flex');
-            const loaded = await loadData();
-            loadingDiv.classList.remove('flex');
-            loadingDiv.classList.add('hidden');
 
-            if (!loaded) {
+            try {
+                // Appel de la fonction RPC sécurisée
+                const { data: order, error } = await supabase.rpc('get_public_order_by_id', { order_id: orderId });
+                if (error) throw error;
+
+                if (!order) {
+                    errorDiv.textContent = `Aucune commande trouvée pour "${orderId}". Vérifiez le numéro.`;
+                    errorDiv.classList.remove('hidden');
+                    loadingDiv.classList.add('hidden');
+                    loadingDiv.classList.remove('flex');
+                    return;
+                }
+
+                // Affichage du résultat
+                searchSection.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                renderOrderPremium(order);
+            } catch (e) {
+                console.error(e);
                 errorDiv.textContent = "Service momentanément indisponible. Veuillez réessayer.";
                 errorDiv.classList.remove('hidden');
-                return;
+            } finally {
+                loadingDiv.classList.add('hidden');
+                loadingDiv.classList.remove('flex');
             }
-
-            const order = orders.find(o => o.id.toLowerCase() === orderId.toLowerCase());
-            if (!order) {
-                errorDiv.textContent = `Aucune commande trouvée pour "${orderId}". Vérifiez le numéro.`;
-                errorDiv.classList.remove('hidden');
-                return;
-            }
-
-            searchSection.classList.add('hidden');
-            resultContainer.classList.remove('hidden');
-            renderOrderPremium(order);
         }
 
-        // ========== TIMELINE CORRIGÉE (cercles + traits alignés) ==========
+        // ========== TIMELINE ==========
         function renderTimeline(steps) {
             let html = '<div class="timeline-container">';
             
@@ -311,14 +306,12 @@
                 const labelClass = step.completed ? 'text-slate-700' : (step.active ? 'text-indigo-600 font-extrabold' : 'text-slate-400');
                 const lineClass = step.completed ? 'bg-emerald-500' : 'bg-slate-200';
                 
-                // Cercle
                 html += `
                     <div class="timeline-step">
                         <div class="timeline-dot ${dotClass}">${dotContent}</div>
                         <div class="timeline-label ${labelClass}">${step.name}</div>
                     </div>`;
                 
-                // Trait entre les cercles (sauf après le dernier)
                 if (idx < steps.length - 1) {
                     html += `<div class="timeline-line ${lineClass}"></div>`;
                 }
@@ -331,7 +324,8 @@
         function renderOrderPremium(order) {
             const container = document.getElementById('resultContainer');
             
-            const visibleItems = order.items.filter(i => !i.hidden);
+            // order.items est déjà un tableau grâce au jsonb_build_object
+            const visibleItems = order.items ? order.items.filter(i => !i.hidden) : [];
             const allLivré = visibleItems.every(i => i.status === "livré");
             const allRécupéré = visibleItems.every(i => i.status === "récupéré");
             const allDone = allLivré || allRécupéré;
