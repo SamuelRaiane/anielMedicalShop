@@ -212,6 +212,20 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBhYnN2Z3V3bGlnYnRmZW9kcWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNDA1MDksImV4cCI6MjA5NTYxNjUwOX0.IPs0ofNQ8J5IY8IM6SQuWt-QrdPaelBvY9R_jlMtXaY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // Récupérer l'ID dans l'URL (ex: ?id=2261DY)
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderIdFromUrl = urlParams.get('id');
+
+        if (orderIdFromUrl) {
+            // Remplir le champ input
+            document.getElementById('orderIdInput').value = orderIdFromUrl;
+            // Lancer automatiquement la recherche après un court délai (pour laisser le DOM se stabiliser)
+            setTimeout(() => {
+                performSearch();
+            }, 100);
+        }
+
+
         function formatDate(dateStr) {
             if (!dateStr) return 'Non spécifiée';
             const d = new Date(dateStr);
